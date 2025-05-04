@@ -1,0 +1,58 @@
+#include <iostream>
+using namespace std;
+
+// Template function for Selection Sort
+template <typename T>
+void selectionSort(T arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx])
+                minIdx = j;
+        }
+        // Swap using a temporary variable
+        T temp = arr[i];
+        arr[i] = arr[minIdx];
+        arr[minIdx] = temp;
+    }
+}
+
+// Template function to print an array
+template <typename T>
+void printArray(T arr[], int n) {
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
+    cout << endl;
+}
+
+int main() {
+    int intArr[100], n;
+    float floatArr[100];
+    int m;
+
+    // Input and sort integer array
+    cout << "Enter number of elements in integer array: ";
+    cin >> n;
+    cout << "Enter " << n << " integers:\n";
+    for (int i = 0; i < n; i++)
+        cin >> intArr[i];
+
+    selectionSort(intArr, n);
+
+    cout << "Sorted integer array:\n";
+    printArray(intArr, n);
+
+    // Input and sort float array
+    cout << "\nEnter number of elements in float array: ";
+    cin >> m;
+    cout << "Enter " << m << " floats:\n";
+    for (int i = 0; i < m; i++)
+        cin >> floatArr[i];
+
+    selectionSort(floatArr, m);
+
+    cout << "Sorted float array:\n";
+    printArray(floatArr, m);
+
+    return 0;
+}
