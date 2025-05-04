@@ -1,0 +1,206 @@
+#include <iostream>
+#include <cstring>
+#include <stdexcept>
+
+using namespace std;
+
+// Forward declaration for friend class
+class Insurance;
+
+class Personnel {
+private:
+    char* name;
+    char* dob;
+    char* bloodGroup;
+    float height;
+    float weight;
+    long long phoneNumber;
+    char* address;
+    char* licenseNumber;
+
+    static int count;
+
+public:
+    // Default constructor
+    Personnel() {
+        name = new char[1];
+        dob = new char[1];
+        bloodGroup = new char[1];
+        address = new char[1];
+        licenseNumber = new char[1];
+
+        strcpy(name, "");
+        strcpy(dob, "");
+        strcpy(bloodGroup, "");
+        strcpy(address, "");
+        strcpy(licenseNumber, "");
+
+        height = 0.0;
+        weight = 0.0;
+        phoneNumber = 0;
+        count++;
+    }
+
+    // Parameterized constructor
+    Personnel(const char* n, const char* d, const char* bg, float h, float w, long long phone, const char* addr, const char* lic) {
+        name = new char[strlen(n)+1];
+        dob = new char[strlen(d)+1];
+        bloodGroup = new char[strlen(bg)+1];
+        address = new char[strlen(addr)+1];
+        licenseNumber = new char[strlen(lic)+1];
+
+        strcpy(name, n);
+        strcpy(dob, d);
+        strcpy(bloodGroup, bg);
+        strcpy(address, addr);
+        strcpy(licenseNumber, lic);
+
+        height = h;
+        weight = w;
+        phoneNumber = phone;
+        count++;
+    }
+
+    // Copy constructor
+    Personnel(const Personnel& p) {
+        name = new char[strlen(p.name)+1];
+        dob = new char[strlen(p.dob)+1];
+        bloodGroup = new char[strlen(p.bloodGroup)+1];
+        address = new char[strlen(p.address)+1];
+        licenseNumber = new char[strlen(p.licenseNumber)+1];
+
+        strcpy(name, p.name);
+        strcpy(dob, p.dob);
+        strcpy(bloodGroup, p.bloodGroup);
+        strcpy(address, p.address);
+        strcpy(licenseNumber, p.licenseNumber);
+
+        height = p.height;
+        weight = p.weight;
+        phoneNumber = p.phoneNumber;
+        count++;
+    }
+
+    // Inline function to display data
+    inline void display() const {
+        cout << "\n--- Personnel Record ---\n";
+        cout << "Name: " << name << "\nDOB: " << dob << "\nBlood Group: " << bloodGroup
+             << "\nHeight: " << height << " cm\nWeight: " << weight << " kg"
+             << "\nPhone Number: " << phoneNumber << "\nAddress: " << address
+             << "\nDriving License No: " << licenseNumber << endl;
+    }
+
+    // Friend function
+    friend class Insurance;
+
+    // Static function to get count
+    static int getCount() {
+        return count;
+    }
+
+    // Destructor
+    ~Personnel() {
+        delete[] name;
+        delete[] dob;
+        delete[] bloodGroup;
+        delete[] address;
+        delete[] licenseNumber;
+        count--;
+    }
+};
+
+// Initialize static member
+int Personnel::count = 0;
+
+// Insurance class to demonstrate friend access
+class Insurance {
+private:
+    long long policyNumber;
+
+public:
+    Insurance(long long num) : policyNumber(num) {}
+
+    void showInsurance(const Personnel& p) const {
+        cout << "\n--- Insurance Details ---";
+        cout << "\nName: " << p.name;
+        cout << "\nPolicy Number: " << policyNumber << endl;
+    }
+};
+
+// Main function to test the Personnel class
+int main() {
+    try {
+        int n;
+        cout << "Enter number of personnel records: ";
+        cin >> n;
+
+        if (n <= 0) {
+            throw invalid_argument("Record count must be greater than zero.");
+        }
+
+        Personnel** records = new Personnel*[n];
+
+        for (int i = 0; i < n; ++i) {
+            cout << "\n--- Enter details for person " << i + 1 << " ---\n";
+
+            char name[100], dob[20], bg[10], addr[200], lic[20];
+            float height, weight;
+            long long phone, policy;
+
+            cin.ignore(); // flush newline
+            cout << "Name: ";
+            cin.getline(name, 100);
+
+            cout << "Date of Birth (DD/MM/YYYY): ";
+            cin.getline(dob, 20);
+
+            cout << "Blood Group: ";
+            cin.getline(bg, 10);
+
+            cout << "Height (in cm): ";
+            cin >> height;
+
+            cout << "Weight (in kg): ";
+            cin >> weight;
+
+            cout << "Phone Number: ";
+            cin >> phone;
+
+            cout << "Policy Number: ";
+            cin >> policy;
+            cin.ignore();
+
+            cout << "Contact Address: ";
+            cin.getline(addr, 200);
+
+            cout << "Driving License No: ";
+            cin.getline(lic, 20);
+
+            // Dynamic allocation with constructor
+            records[i] = new Personnel(name, dob, bg, height, weight, phone, addr, lic);
+
+            // Display using inline + this pointer is implicitly used
+            records[i]->display();
+
+            // Friend class usage
+            Insurance ins(policy);
+            ins.showInsurance(*records[i]);
+        }
+
+        cout << "\nTotal personnel records created: " << Personnel::getCount() << endl;
+
+        // Clean up memory
+        for (int i = 0; i < n; ++i) {
+            delete records[i];
+        }
+        delete[] records;
+    }
+    catch (bad_alloc& e) {
+        cerr << "Memory allocation failed: " << e.what() << endl;
+    }
+    catch (exception& e) {
+        cerr << "Exception: " << e.what() << endl;
+    }
+
+    return 0;
+}
