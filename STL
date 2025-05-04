@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+// Structure to hold personal record
+struct Person {
+    string name;
+    string dob;  // format: DD/MM/YYYY
+    string phone;
+
+    // Constructor
+    Person(string n, string d, string p) : name(n), dob(d), phone(p) {}
+};
+
+// Function to display a person's record
+void display(const Person& p) {
+    cout << "Name: " << p.name << ", DOB: " << p.dob << ", Phone: " << p.phone << endl;
+}
+
+// Comparator function to sort by name
+bool compareByName(const Person& a, const Person& b) {
+    return a.name < b.name;
+}
+
+// Function to search by name
+void searchByName(const vector<Person>& people, const string& targetName) {
+    auto it = find_if(people.begin(), people.end(), [&targetName](const Person& p) {
+        return p.name == targetName;
+    });
+
+    if (it != people.end()) {
+        cout << "\nRecord found:\n";
+        display(*it);
+    } else {
+        cout << "\nRecord with name \"" << targetName << "\" not found.\n";
+    }
+}
+
+int main() {
+    vector<Person> records;
+    int n;
+
+    cout << "Enter number of personal records: ";
+    cin >> n;
+    cin.ignore(); // flush newline
+
+    for (int i = 0; i < n; ++i) {
+        string name, dob, phone;
+        cout << "\nEnter details for person " << i + 1 << ":\n";
+        cout << "Name: ";
+        getline(cin, name);
+        cout << "DOB (DD/MM/YYYY): ";
+        getline(cin, dob);
+        cout << "Phone: ";
+        getline(cin, phone);
+
+        records.emplace_back(name, dob, phone);
+    }
+
+    // Sort records by name
+    sort(records.begin(), records.end(), compareByName);
+
+    // Display sorted records
+    cout << "\nSorted Personal Records (by Name):\n";
+    for (const auto& p : records) {
+        display(p);
+    }
+
+    // Search for a record by name
+    string searchName;
+    cout << "\nEnter name to search: ";
+    getline(cin, searchName);
+
+    searchByName(records, searchName);
+
+    return 0;
+}
