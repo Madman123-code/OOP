@@ -1,0 +1,53 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+using namespace std;
+
+int main()
+{
+    // File name
+    const string filename = "student_data.txt";
+    
+    // Data to write to file
+    string data = "Practical Exam - File Handling\n";
+    data += "Name: John Doe\n";
+    data += "Roll No: 101\n";
+    data += "Subject: Computer Science\n";
+    
+    // Part 1: Writing to file
+    ofstream fout;  // Create output file stream object
+    fout.open(filename);  // Open file
+    
+    if(!fout)
+    {
+        cout << "Error opening file for writing!" << endl;
+        return 1;
+    }
+    
+    fout << data;  // Write data to file
+    fout.close();  // Close file
+    cout << "Data written to file successfully!" << endl << endl;
+    
+    // Part 2: Reading from file
+    ifstream fin;  // Create input file stream object
+    fin.open(filename);  // Open file
+    
+    if(!fin)
+    {
+        cout << "Error opening file for reading!" << endl;
+        return 1;
+    }
+    
+    cout << "Reading data from file:\n";
+    cout << "------------------------\n";
+    
+    string line;
+    while(getline(fin, line))  // Read line by line
+    {
+        cout << line << endl;  // Display each line
+    }
+    
+    fin.close();  // Close file
+    
+    return 0;
+}
